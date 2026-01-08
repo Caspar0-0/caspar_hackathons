@@ -1,0 +1,334 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #87CEEB; /* Fallback sky */
+}
+
+.ui-layer {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none; /* Let clicks pass through to game */
+    z-index: 10;
+}
+
+.score-box {
+    background: white;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #679d39; /* TaskRabbit Green */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.lives-box {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 5px;
+}
+
+.life {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.life.lost {
+    opacity: 0.2;
+    filter: grayscale(100%);
+    transform: scale(0.8);
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+.music-toggle {
+    background: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.music-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.music-toggle:active {
+    transform: scale(0.95);
+}
+
+.controls-hint {
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    margin-right: 40px;
+}
+
+/* Modal */
+.modal {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    backdrop-filter: blur(5px);
+}
+
+.hidden { display: none !important; }
+
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+h1 { margin: 0 0 10px 0; color: #d32f2f; font-size: 2.5rem; }
+p { margin: 0 0 20px 0; color: #666; }
+
+button {
+    background: #679d39;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button:hover { transform: scale(1.05); background: #558b2f; }
+
+.home-link {
+    display: block;
+    margin-top: 15px;
+    color: #999;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #679d39;
+}
+
+.small-text {
+    font-size: 0.9rem;
+    color: #999;
+    margin: 10px 0;
+}
+
+/* Task Message - Speech Bubble at Top Center */
+.task-message {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translate(-50%, -100%) scale(0);
+    background: white;
+    color: #333;
+    padding: 20px 35px;
+    border-radius: 25px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 4px solid #679d39;
+}
+
+/* Speech bubble tail pointing down */
+.task-message::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid white;
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.2));
+}
+
+/* Border for the tail */
+.task-message::before {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 23px solid transparent;
+    border-right: 23px solid transparent;
+    border-top: 23px solid #679d39;
+}
+
+.task-message.show {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+    animation: bubbleBounce 0.6s ease;
+}
+
+@keyframes bubbleBounce {
+    0% { transform: translate(-50%, -20px) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+    70% { transform: translate(-50%, 0) scale(0.95); }
+    100% { transform: translate(-50%, 0) scale(1); }
+}
+
+/* Items Legend on Left Side */
+.items-legend {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    min-width: 200px;
+    backdrop-filter: blur(5px);
+    border: 3px solid #679d39;
+}
+
+.items-legend h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: #679d39;
+    font-weight: 900;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 8px;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.legend-item:hover {
+    transform: translateX(5px);
+}
+
+.legend-item.positive {
+    background: rgba(103, 157, 57, 0.1);
+}
+
+.legend-item.positive:hover {
+    background: rgba(103, 157, 57, 0.2);
+}
+
+.legend-item.negative {
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.legend-item.negative:hover {
+    background: rgba(231, 76, 60, 0.2);
+}
+
+.legend-item.task-item {
+    border-left: 3px solid #FFD700;
+}
+
+.item-icon {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.item-name {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.item-points {
+    font-weight: 900;
+    font-size: 1rem;
+    margin-left: 10px;
+}
+
+.legend-item.positive .item-points {
+    color: #679d39;
+}
+
+.legend-item.negative .item-points {
+    color: #e74c3c;
+}
+
+/* Responsive - hide legend on small screens */
+@media (max-width: 768px) {
+    .items-legend {
+        left: 10px;
+        padding: 10px;
+        font-size: 0.85rem;
+        min-width: 150px;
+    }
+    
+    .items-legend h3 {
+        font-size: 0.9rem;
+    }
+    
+    .item-icon {
+        font-size: 1.2rem;
+        margin-right: 5px;
+    }
+    
+    .item-name {
+        font-size: 0.75rem;
+    }
+    
+    .item-points {
+        font-size: 0.85rem;
+    }
+}

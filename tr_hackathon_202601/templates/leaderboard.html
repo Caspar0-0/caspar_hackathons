@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - TaskRabbit for Life</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='leaderboard.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav>
+        <div class="logo">TaskRabbit</div>
+        <div class="links">
+            <a href="/">Home</a>
+            <a href="/play">Play</a>
+            <a href="/leaderboard" class="active">Leaderboard</a>
+        </div>
+    </nav>
+
+    <div class="leaderboard-container">
+        <h1>🏆 LEADERBOARD</h1>
+        <p class="subtitle">Top Players This Season</p>
+
+        <div class="filter-tabs">
+            <button class="tab-btn active" onclick="filterLeaderboard('all')">All Time</button>
+            <button class="tab-btn" onclick="filterLeaderboard('week')">This Week</button>
+            <button class="tab-btn" onclick="filterLeaderboard('today')">Today</button>
+        </div>
+
+        <div class="leaderboard-table">
+            <div class="table-header">
+                <div class="rank-col">Rank</div>
+                <div class="name-col">Player</div>
+                <div class="score-col">Score</div>
+                <div class="date-col">Date</div>
+            </div>
+
+            {% if scores %}
+                {% for score in scores %}
+                <div class="table-row {% if score[1] == current_username %}highlight{% endif %}">
+                    <div class="rank-col">
+                        {% if loop.index == 1 %}🥇
+                        {% elif loop.index == 2 %}🥈
+                        {% elif loop.index == 3 %}🥉
+                        {% else %}{{ loop.index }}
+                        {% endif %}
+                    </div>
+                    <div class="name-col">{{ score[1] }}</div>
+                    <div class="score-col">{{ score[2] }}</div>
+                    <div class="date-col">Recently</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-scores">
+                    <p>No scores yet. Be the first to play!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if user_rank %}
+        <div class="user-stats">
+            <h3>Your Stats</h3>
+            <p>Best Score: <strong>{{ user_best }}</strong></p>
+            <p>Rank: <strong>#{{ user_rank }}</strong></p>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="/play" class="btn btn-primary">🎮 PLAY NOW</a>
+            <a href="/" class="btn btn-secondary">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        function filterLeaderboard(period) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // In a full implementation, this would fetch filtered data from the server
+            // For now, we'll just show all scores
+            console.log('Filtering by:', period);
+        }
+    </script>
+</body>
+</html>

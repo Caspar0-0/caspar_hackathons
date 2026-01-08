@@ -1,0 +1,3 @@
+{"location":"game.js:178","message":"Camera and fog setup","data":{"cameraPos":{"x":0,"y":3,"z":6},"lookAt":{"x":0,"y":0,"z":-5},"fogNear":10,"fogFar":50,"skyColor":8900331},"timestamp":1767865020232,"sessionId":"debug-session","hypothesisId":"E"}
+{"location":"game.js:178","message":"Camera and fog setup","data":{"cameraPos":{"x":0,"y":3,"z":6},"lookAt":{"x":0,"y":0,"z":-5},"fogNear":10,"fogFar":50,"skyColor":8900331},"timestamp":1767865033462,"sessionId":"debug-session","hypothesisId":"E"}
+{"location":"game.js:178","message":"Camera and fog setup","data":{"cameraPos":{"x":0,"y":3,"z":6},"lookAt":{"x":0,"y":0,"z":-5},"fogNear":10,"fogFar":50,"skyColor":8900331},"timestamp":1767865040167,"sessionId":"debug-session","hypothesisId":"E"}

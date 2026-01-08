@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prize Draw - TaskRabbit for Life</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='lottery.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="lottery-container">
+        <div class="lottery-header">
+            <h1>🎰 PRIZE DRAW</h1>
+            <p class="score-display">Your Score: <span id="player-score">{{ score }}</span></p>
+        </div>
+
+        <div class="lottery-machine" id="lottery-machine">
+            <div class="slot-container">
+                <div class="slot" id="slot1">🥕</div>
+                <div class="slot" id="slot2">🌉</div>
+                <div class="slot" id="slot3">☕</div>
+            </div>
+            <button class="draw-button" id="draw-btn">DRAW YOUR PRIZE</button>
+        </div>
+
+        <div class="prize-reveal hidden" id="prize-reveal">
+            <div class="confetti" id="confetti"></div>
+            <div class="prize-card-big">
+                <div class="prize-icon-big" id="prize-icon">🏆</div>
+                <h2 id="prize-title">Grand Prize!</h2>
+                <p id="prize-description">Free Tasks for a Year!</p>
+                <div class="prize-congrats">🎉 Congratulations! 🎉</div>
+            </div>
+            
+            <div class="share-section">
+                <h3>Share Your Win!</h3>
+                <div class="share-buttons">
+                    <button class="share-btn twitter" onclick="shareTwitter()">
+                        <span class="icon">🐦</span> Twitter
+                    </button>
+                    <button class="share-btn facebook" onclick="shareFacebook()">
+                        <span class="icon">📘</span> Facebook
+                    </button>
+                    <button class="share-btn linkedin" onclick="shareLinkedIn()">
+                        <span class="icon">💼</span> LinkedIn
+                    </button>
+                    <button class="share-btn copy" onclick="copyLink()">
+                        <span class="icon">📋</span> Copy Link
+                    </button>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/play" class="btn btn-primary">🐰 PLAY AGAIN</a>
+                <a href="/leaderboard" class="btn btn-secondary">🏆 LEADERBOARD</a>
+                <a href="/" class="btn btn-secondary">🏠 HOME</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const score = {{ score }};
+        const prizeData = {{ prize_data | tojson }};
+        const gameUrl = window.location.origin;
+        
+        const drawBtn = document.getElementById('draw-btn');
+        const lotteryMachine = document.getElementById('lottery-machine');
+        const prizeReveal = document.getElementById('prize-reveal');
+        const slots = [document.getElementById('slot1'), document.getElementById('slot2'), document.getElementById('slot3')];
+        
+        const symbols = ['🥕', '🌉', '☕', '🏆', '🎁', '⭐', '💎', '🎯'];
+        let spinning = false;
+        
+        drawBtn.addEventListener('click', () => {
+            if (spinning) return;
+            spinning = true;
+            drawBtn.disabled = true;
+            drawBtn.textContent = 'DRAWING...';
+            
+            // Spin animation - faster (cut in half)
+            let spinCount = 0;
+            const spinInterval = setInterval(() => {
+                slots.forEach(slot => {
+                    slot.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                });
+                spinCount++;
+                
+                if (spinCount > 15) { // Reduced from 30 to 15
+                    clearInterval(spinInterval);
+                    revealPrize();
+                }
+            }, 100);
+        });
+        
+        function revealPrize() {
+            // Set final symbols
+            slots[0].textContent = prizeData.icon;
+            slots[1].textContent = prizeData.icon;
+            slots[2].textContent = prizeData.icon;
+            
+            setTimeout(() => {
+                lotteryMachine.classList.add('hidden');
+                prizeReveal.classList.remove('hidden');
+                
+                // Update prize info
+                document.getElementById('prize-icon').textContent = prizeData.icon;
+                document.getElementById('prize-title').textContent = prizeData.name;
+                document.getElementById('prize-description').textContent = prizeData.description;
+                
+                // Trigger confetti
+                createConfetti();
+            }, 500); // Reduced from 1000ms to 500ms
+        }
+        
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            const colors = ['#679d39', '#FFD700', '#FF69B4', '#87CEEB', '#FF6347', '#9370DB'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confettiContainer.appendChild(confetti);
+            }
+        }
+        
+        // Social sharing functions
+        function shareTwitter() {
+            const text = `I just won ${prizeData.name} playing TaskRabbit Merrython! Score: ${score} 🎉 Can you beat my score?`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(gameUrl)}`;
+            window.open(url, '_blank', 'width=550,height=420');
+        }
+        
+        function shareFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(gameUrl)}&quote=${encodeURIComponent(`I just won ${prizeData.name} with a score of ${score}!`)}`;
+            window.open(url, '_blank', 'width=550,height=420');
+        }
+        
+        function shareLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(gameUrl)}`;
+            window.open(url, '_blank', 'width=550,height=420');
+        }
+        
+        function copyLink() {
+            const text = `I just won ${prizeData.name} playing TaskRabbit Merrython! Score: ${score} 🎉\nPlay now: ${gameUrl}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const btn = event.target.closest('.share-btn');
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<span class="icon">✓</span> Copied!';
+                    btn.style.background = '#4CAF50';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = '';
+                    }, 2000);
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Link copied to clipboard!');
+            }
+        }
+    </script>
+</body>
+</html>
+
