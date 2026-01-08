@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskRabbit: Bay Area Hustle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo">TaskRabbit <span class="highlight">for Life</span></div>
+        <div class="stats">
+            <div class="stat-box">🥕 Carrots: <span id="carrot-count">{{ user['carrots'] }}</span></div>
+            <div class="stat-box">⚡ Energy: <span id="energy-count">{{ user['energy'] }}</span></div>
+        </div>
+    </header>
+
+    <main>
+        <div class="game-container">
+            <div class="board">
+                {% for node in board %}
+                <div class="tile {{ node['type'] }} {% if user['position'] == node['id'] %}active{% endif %}" id="tile-{{ node['id'] }}">
+                    <div class="tile-header">{{ node['name'] }}</div>
+                    <div class="tile-icon">
+                        {% if node['type'] == 'start' %} 🏠
+                        {% elif node['type'] == 'task' %} 🔨
+                        {% elif node['type'] == 'chance' %} 🎲
+                        {% elif node['type'] == 'landmark' %} 🌉
+                        {% elif node['type'] == 'prize' %} 🏆
+                        {% endif %}
+                    </div>
+                    {% if user['position'] == node['id'] %}
+                        <div class="player-token">🐰</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="controls">
+            <p id="game-message">Ready to hustle? Roll the dice!</p>
+            <button id="roll-btn" onclick="rollDice()">Roll Dice 🎲</button>
+        </div>
+    </main>
+
+    <script>
+        async function rollDice() {
+            const btn = document.getElementById('roll-btn');
+            const msg = document.getElementById('game-message');
+            btn.disabled = true;
+            msg.innerText = "Rolling...";
+
+            try {
+                const response = await fetch('/roll', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    msg.innerText = data.message;
+                    msg.style.color = 'red';
+                } else {
+                    // Update UI Stats
+                    document.getElementById('carrot-count').innerText = data.carrots;
+                    document.getElementById('energy-count').innerText = data.energy;
+                    msg.innerText = data.message;
+                    msg.style.color = '#333';
+
+                    // Move Player Token visually
+                    document.querySelector('.player-token').remove();
+                    const newTile = document.getElementById(`tile-${data.new_pos}`);
+                    const token = document.createElement('div');
+                    token.className = 'player-token';
+                    token.innerText = '🐰';
+                    newTile.appendChild(token);
+
+                    // Highlight active tile
+                    document.querySelectorAll('.tile').forEach(t => t.classList.remove('active'));
+                    newTile.classList.add('active');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

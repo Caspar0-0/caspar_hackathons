@@ -1,0 +1,124 @@
+:root {
+    --tr-green: #679d39; /* TaskRabbit Brand Green */
+    --tr-dark: #2b3a42;
+    --bg-color: #f3f6f8;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    color: var(--tr-dark);
+}
+
+header {
+    background: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--tr-dark);
+}
+
+.highlight { color: var(--tr-green); }
+
+.stats { display: flex; gap: 20px; }
+.stat-box {
+    background: #eef5e9;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: var(--tr-green);
+}
+
+.game-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+/* The Board - A winding path */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.tile {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.tile.active {
+    border-color: var(--tr-green);
+    box-shadow: 0 0 15px rgba(103, 157, 57, 0.4);
+    transform: scale(1.05);
+}
+
+.tile-header {
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.tile-icon { font-size: 2.5rem; }
+
+/* Tile Types */
+.tile.start { border-bottom: 5px solid #ccc; }
+.tile.task { border-bottom: 5px solid var(--tr-green); }
+.tile.chance { border-bottom: 5px solid #f4b400; }
+.tile.landmark { border-bottom: 5px solid #4285f4; }
+.tile.prize { border-bottom: 5px solid #db4437; background: #fff0f0; }
+
+.player-token {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 2rem;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.controls {
+    text-align: center;
+    padding: 20px;
+}
+
+button {
+    background-color: var(--tr-green);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #55822d;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
