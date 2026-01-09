@@ -19,10 +19,10 @@ from contextlib import contextmanager
 # All credentials must be set in .env file - no defaults for sensitive data
 
 SNOWFLAKE_CONFIG = {
-    'account': os.getenv('SNOWFLAKE_ACCOUNT'),         # Required: e.g., 'MX08059-TASKRABBIT'
-    'user': os.getenv('SNOWFLAKE_USER'),               # Required: e.g., 'USER@TASKRABBIT.COM'
+    'account': os.getenv('SNOWFLAKE_ACCOUNT'),         
+    'user': os.getenv('SNOWFLAKE_USER'),               
     'authenticator': 'externalbrowser',                 # SSO via browser (Okta/SAML)
-    'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),     # Required: e.g., 'DATA_ANALYST_WAREHOUSE'
+    'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),     
     'database': os.getenv('SNOWFLAKE_DATABASE'),       # Required: e.g., 'DEV'
     'schema': os.getenv('SNOWFLAKE_SCHEMA', 'MERRYTHON_GAME'),  # Default schema name is OK
     'role': os.getenv('SNOWFLAKE_ROLE'),               # Required: e.g., 'DATA_ENGINEER'
