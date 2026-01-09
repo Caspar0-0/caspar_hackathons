@@ -10,6 +10,17 @@ const COLORS = {
     coin: 0xFFA500     // Carrot Orange
 };
 
+const TASKRABBIT_FACTS = [
+    "TaskRabbit was founded in 2008!",
+    "IKEA acquired TaskRabbit in 2017!",
+    "There are over 200,000 Taskers worldwide!",
+    "The first task ever was buying groceries!",
+    "Taskers have assembled millions of IKEA items!",
+    "You can hire Taskers for almost anything!",
+    "TaskRabbit is available in thousands of cities!",
+    "Taskers help people reclaim their free time!"
+];
+
 // --- GLOBAL VARIABLES ---
 let scene, camera, renderer;
 let hero;
@@ -524,34 +535,52 @@ function spawnCoin() {
 
 // --- SF LANDMARKS ---
 function createSFLandmarks() {
-    // Golden Gate Bridge - High Fidelity Version
-    const internationalOrange = 0xC0362C;
-    const bridgeZ = -40;
+    // ========================================
+    // GOLDEN GATE BRIDGE - GLOWING NEON STYLE
+    // ========================================
+    const bridgeZ = -30; // Closer for visibility
     
-    // Tower material - Authentic SF color with subtle shine
-    const towerMat = new THREE.MeshPhongMaterial({ 
-        color: internationalOrange,
-        specular: 0x333333,
-        shininess: 30,
-        flatShading: true
+    // Glowing neon orange material - bright and unmissable
+    const glowingOrange = new THREE.MeshPhongMaterial({ 
+        color: 0xFF4500,        // Bright orange-red
+        emissive: 0xFF6347,     // Strong self-illumination
+        specular: 0xFFFFFF,
+        shininess: 100,
+        flatShading: false
+    });
+    
+    // Glow halo material for neon effect
+    const glowHaloMat = new THREE.MeshBasicMaterial({
+        color: 0xFF6600,
+        transparent: true,
+        opacity: 0.25,
+        side: THREE.BackSide
     });
 
     function createBridgeTower(x) {
         const tower = new THREE.Group();
         
-        // Main tower legs (tapered look)
+        // Main tower legs - glowing
         const legGeo = new THREE.BoxGeometry(0.8, 12, 0.8);
-        const leftLeg = new THREE.Mesh(legGeo, towerMat);
+        const leftLeg = new THREE.Mesh(legGeo, glowingOrange);
         leftLeg.position.x = -0.6;
-        const rightLeg = new THREE.Mesh(legGeo, towerMat);
+        const rightLeg = new THREE.Mesh(legGeo, glowingOrange);
         rightLeg.position.x = 0.6;
         tower.add(leftLeg, rightLeg);
         
-        // Cross-bracing (the iconic "X" or horizontal bars)
-        const braceGeo = new THREE.BoxGeometry(1.4, 0.4, 0.6);
+        // Glow halos behind legs
+        const haloGeo = new THREE.BoxGeometry(1.2, 13, 1.2);
+        const leftHalo = new THREE.Mesh(haloGeo, glowHaloMat);
+        leftHalo.position.x = -0.6;
+        const rightHalo = new THREE.Mesh(haloGeo, glowHaloMat);
+        rightHalo.position.x = 0.6;
+        tower.add(leftHalo, rightHalo);
+        
+        // Cross-bracing (the iconic horizontal bars)
+        const braceGeo = new THREE.BoxGeometry(1.6, 0.5, 0.7);
         for (let i = 0; i < 4; i++) {
-            const brace = new THREE.Mesh(braceGeo, towerMat);
-            brace.position.y = -4 + (i * 3); // 4 bars at intervals
+            const brace = new THREE.Mesh(braceGeo, glowingOrange);
+            brace.position.y = -4 + (i * 3);
             tower.add(brace);
         }
         
@@ -560,89 +589,147 @@ function createSFLandmarks() {
         return tower;
     }
 
-    const tower1 = createBridgeTower(-12);
-    const tower2 = createBridgeTower(12);
+    const tower1 = createBridgeTower(-10);
+    const tower2 = createBridgeTower(10);
 
-    // Bridge deck
-    const deckGeo = new THREE.BoxGeometry(30, 0.6, 2);
-    const deckMat = new THREE.MeshPhongMaterial({ color: internationalOrange });
-    const deck = new THREE.Mesh(deckGeo, deckMat);
+    // Bridge deck - glowing
+    const deckGeo = new THREE.BoxGeometry(26, 0.7, 2.5);
+    const deck = new THREE.Mesh(deckGeo, glowingOrange);
     deck.position.set(0, 3, bridgeZ);
     scene.add(deck);
+    
+    // Deck glow halo
+    const deckHaloGeo = new THREE.BoxGeometry(27, 1.2, 3);
+    const deckHalo = new THREE.Mesh(deckHaloGeo, glowHaloMat);
+    deckHalo.position.set(0, 3, bridgeZ);
+    scene.add(deckHalo);
 
-    // Curved Suspension Cables
-    const curveColor = 0xDDDDDD; // Brighter gray/steel
-    const mainCableMat = new THREE.MeshPhongMaterial({ color: curveColor });
+    // Curved Suspension Cables - also glowing
+    const cableMat = new THREE.MeshPhongMaterial({ 
+        color: 0xFF5722,
+        emissive: 0xFF4500,
+        shininess: 80
+    });
     
     // Create curve between towers
     const curve = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3(-12, 11, bridgeZ), // Tower 1 top
-        new THREE.Vector3(0, 4, bridgeZ),    // Lowest point (middle)
-        new THREE.Vector3(12, 11, bridgeZ)   // Tower 2 top
+        new THREE.Vector3(-10, 11, bridgeZ),
+        new THREE.Vector3(0, 4.5, bridgeZ),
+        new THREE.Vector3(10, 11, bridgeZ)
     );
     
     const points = curve.getPoints(30);
-    const cableRadius = 0.12;
+    const cableRadius = 0.15;
     
     for (let i = 0; i < points.length - 1; i++) {
         const start = points[i];
         const end = points[i+1];
         const distance = start.distanceTo(end);
         
-        const segmentGeo = new THREE.CylinderGeometry(cableRadius, cableRadius, distance, 6);
-        const segment = new THREE.Mesh(segmentGeo, mainCableMat);
+        const segmentGeo = new THREE.CylinderGeometry(cableRadius, cableRadius, distance, 8);
+        const segment = new THREE.Mesh(segmentGeo, cableMat);
         
-        // Position and rotate segment to connect points
         segment.position.copy(start).lerp(end, 0.5);
         segment.lookAt(end);
         segment.rotation.x += Math.PI / 2;
         
         scene.add(segment);
 
-        // Add vertical suspender cables at regular intervals
+        // Vertical suspender cables
         if (i % 3 === 0 && i > 0 && i < points.length - 1) {
-            const suspenderHeight = segment.position.y - 3; // From cable to deck (at y=3)
+            const suspenderHeight = segment.position.y - 3;
             if (suspenderHeight > 0) {
-                const suspenderGeo = new THREE.CylinderGeometry(0.04, 0.04, suspenderHeight, 4);
-                const suspender = new THREE.Mesh(suspenderGeo, mainCableMat);
+                const suspenderGeo = new THREE.CylinderGeometry(0.06, 0.06, suspenderHeight, 6);
+                const suspender = new THREE.Mesh(suspenderGeo, cableMat);
                 suspender.position.set(segment.position.x, 3 + suspenderHeight/2, bridgeZ);
                 scene.add(suspender);
             }
         }
     }
 
-    // Add point lights to make the bridge pop
-    const bridgeLight1 = new THREE.PointLight(internationalOrange, 1, 20);
-    bridgeLight1.position.set(-12, 8, bridgeZ + 2);
+    // ========================================
+    // ENHANCED LIGHTING FOR THE BRIDGE
+    // ========================================
+    
+    // Strong point lights at towers (intensity 3)
+    const bridgeLight1 = new THREE.PointLight(0xFF4500, 3, 30);
+    bridgeLight1.position.set(-10, 10, bridgeZ + 3);
     scene.add(bridgeLight1);
 
-    const bridgeLight2 = new THREE.PointLight(internationalOrange, 1, 20);
-    bridgeLight2.position.set(12, 8, bridgeZ + 2);
+    const bridgeLight2 = new THREE.PointLight(0xFF4500, 3, 30);
+    bridgeLight2.position.set(10, 10, bridgeZ + 3);
     scene.add(bridgeLight2);
     
-    // Transamerica Pyramid - Far right
+    // Upward spotlights on towers
+    const spotlight1 = new THREE.SpotLight(0xFF6347, 2, 20, Math.PI / 6, 0.5);
+    spotlight1.position.set(-10, 0, bridgeZ + 2);
+    spotlight1.target.position.set(-10, 15, bridgeZ);
+    scene.add(spotlight1);
+    scene.add(spotlight1.target);
+    
+    const spotlight2 = new THREE.SpotLight(0xFF6347, 2, 20, Math.PI / 6, 0.5);
+    spotlight2.position.set(10, 0, bridgeZ + 2);
+    spotlight2.target.position.set(10, 15, bridgeZ);
+    scene.add(spotlight2);
+    scene.add(spotlight2.target);
+    
+    // Center bridge light
+    const centerLight = new THREE.PointLight(0xFF5722, 2, 25);
+    centerLight.position.set(0, 6, bridgeZ + 2);
+    scene.add(centerLight);
+
+    // ========================================
+    // WATER/BAY REFLECTION BELOW BRIDGE
+    // ========================================
+    const waterGeo = new THREE.PlaneGeometry(40, 15);
+    const waterMat = new THREE.MeshPhongMaterial({
+        color: 0x1E3A5F,
+        emissive: 0x0A1929,
+        specular: 0x4488AA,
+        shininess: 100,
+        transparent: true,
+        opacity: 0.7
+    });
+    const water = new THREE.Mesh(waterGeo, waterMat);
+    water.rotation.x = -Math.PI / 2;
+    water.position.set(0, -0.5, bridgeZ);
+    scene.add(water);
+    
+    // Water reflection glow
+    const waterGlow = new THREE.PointLight(0xFF4500, 0.5, 15);
+    waterGlow.position.set(0, -1, bridgeZ);
+    scene.add(waterGlow);
+
+    // ========================================
+    // TRANSAMERICA PYRAMID - Pushed back
+    // ========================================
     const pyramidGeo = new THREE.ConeGeometry(2, 10, 4);
-    const pyramidMat = new THREE.MeshPhongMaterial({ color: 0xEEEEEE });
+    const pyramidMat = new THREE.MeshPhongMaterial({ 
+        color: 0xEEEEEE,
+        emissive: 0x333333
+    });
     const pyramid = new THREE.Mesh(pyramidGeo, pyramidMat);
-    pyramid.position.set(15, 4, -35);
+    pyramid.position.set(18, 4, -55);
     pyramid.rotation.y = Math.PI / 4;
     scene.add(pyramid);
     
-    // Skyline buildings - Various heights in background
+    // ========================================
+    // SKYLINE BUILDINGS - Pushed far back
+    // ========================================
     const buildingPositions = [
-        { x: -15, h: 12, z: -45 },
-        { x: -10, h: 8, z: -48 },
-        { x: 12, h: 15, z: -50 },
-        { x: 18, h: 10, z: -46 },
-        { x: 20, h: 7, z: -42 }
+        { x: -18, h: 12, z: -60 },
+        { x: -12, h: 8, z: -65 },
+        { x: 14, h: 15, z: -62 },
+        { x: 22, h: 10, z: -58 },
+        { x: 25, h: 7, z: -55 }
     ];
     
     buildingPositions.forEach(pos => {
         const buildingGeo = new THREE.BoxGeometry(2, pos.h, 2);
         const buildingMat = new THREE.MeshPhongMaterial({ 
-            color: 0x555555,
+            color: 0x444444,
             transparent: true,
-            opacity: 0.8
+            opacity: 0.5  // Dimmed to not compete with bridge
         });
         const building = new THREE.Mesh(buildingGeo, buildingMat);
         building.position.set(pos.x, pos.h / 2, pos.z);
@@ -1242,14 +1329,16 @@ function update() {
         if (zDiff < 1 && laneDiff < 1) {
             // Collected item!
             if (obj.itemType === 'task') {
-                // Task item - show message
+                // Task item - show random fact
                 score += 20;
                 playSound('bonus');
-                showTaskMessage();
+                const randomFact = TASKRABBIT_FACTS[Math.floor(Math.random() * TASKRABBIT_FACTS.length)];
+                showTaskMessage(randomFact);
             } else {
                 // Regular dollar sign
                 score += 10;
                 playSound('collect');
+                showTaskMessage("I got some tip!");
             }
             document.getElementById('score').innerText = score;
             scene.remove(obj);
@@ -1345,23 +1434,23 @@ function updateLivesDisplay() {
     });
 }
 
-function showTaskMessage() {
-    // Show "I got a task!" message
+function showTaskMessage(message) {
+    // Show dynamic message bubble
     let messageDiv = document.getElementById('task-message');
     if (!messageDiv) {
         messageDiv = document.createElement('div');
         messageDiv.id = 'task-message';
         messageDiv.className = 'task-message';
-        messageDiv.textContent = 'I got a task!';
         document.body.appendChild(messageDiv);
     }
     
+    messageDiv.textContent = message || 'I got a task!';
     messageDiv.classList.add('show');
     
-    // Hide after 1.5 seconds
+    // Hide after 2 seconds (slightly longer for reading facts)
     setTimeout(() => {
         messageDiv.classList.remove('show');
-    }, 1500);
+    }, 2000);
 }
 
 function gameOver() {
