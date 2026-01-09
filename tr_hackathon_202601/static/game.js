@@ -11,14 +11,21 @@ const COLORS = {
 };
 
 const TASKRABBIT_FACTS = [
-    "TaskRabbit was founded in 2008!",
-    "IKEA acquired TaskRabbit in 2017!",
-    "There are over 200,000 Taskers worldwide!",
-    "The first task ever was buying groceries!",
-    "Taskers have assembled millions of IKEA items!",
-    "You can hire Taskers for almost anything!",
-    "TaskRabbit is available in thousands of cities!",
-    "Taskers help people reclaim their free time!"
+    "TaskRabbit has completed over 10 million tasks!",
+    "The average Tasker earns $35-50 per hour!",
+    "Furniture assembly is the #1 task category!",
+    "TaskRabbit operates in 8,000+ cities worldwide!",
+    "IKEA assembly requests grew 300% since 2017!",
+    "Peak booking day: Black Friday with 50,000+ tasks!",
+    "TaskRabbit was founded in Boston in 2008!",
+    "IKEA acquired TaskRabbit in September 2017!",
+    "The most expensive task was $15,000 (full renovation)!",
+    "Taskers have assembled 5+ million IKEA items!",
+    "Moving help is the fastest-growing category!",
+    "Average task completion time is 2.5 hours!",
+    "98% of tasks receive 5-star ratings!",
+    "San Francisco has the most Taskers per capita!",
+    "Holiday season sees 400% more cleaning tasks!"
 ];
 
 // --- GLOBAL VARIABLES ---
@@ -789,64 +796,113 @@ function spawnBARTTrain() {
 }
 
 function spawnCableCar() {
-    // Trophy as collectible bonus
+    // TaskRabbit Badge - Premium collectible with TR logo!
     const lanes = [-LANE_WIDTH, 0, LANE_WIDTH];
     const chosenLane = lanes[Math.floor(Math.random() * lanes.length)];
     
-    const trophyGroup = new THREE.Group();
+    const badgeGroup = new THREE.Group();
     
-    // Trophy cup - gold cylinder
-    const cupGeo = new THREE.CylinderGeometry(0.35, 0.25, 0.6, 16);
-    const cupMat = new THREE.MeshPhongMaterial({ 
-        color: 0xFFD700,  // Gold
-        emissive: 0xCC8800,
-        shininess: 100,
-        specular: 0xFFFFAA
+    // TaskRabbit green color
+    const trGreen = 0x1DBF73;
+    const trGreenDark = 0x18A863;
+    const cream = 0xF5F5DC;
+    
+    // Green material for the badge
+    const greenMat = new THREE.MeshPhongMaterial({ 
+        color: trGreen,
+        emissive: 0x0D8050,
+        specular: 0x88FFAA,
+        shininess: 80
     });
-    const cup = new THREE.Mesh(cupGeo, cupMat);
-    cup.position.y = 0.3;
-    cup.castShadow = true;
-    trophyGroup.add(cup);
     
-    // Cup rim
-    const rimGeo = new THREE.CylinderGeometry(0.38, 0.35, 0.1, 16);
-    const rim = new THREE.Mesh(rimGeo, cupMat);
-    rim.position.y = 0.65;
-    trophyGroup.add(rim);
+    // Dark border material
+    const borderMat = new THREE.MeshPhongMaterial({ 
+        color: 0x333333,
+        emissive: 0x111111,
+        specular: 0x444444,
+        shininess: 50
+    });
     
-    // Left handle
-    const handleGeo = new THREE.TorusGeometry(0.15, 0.05, 8, 12, Math.PI);
-    const leftHandle = new THREE.Mesh(handleGeo, cupMat);
-    leftHandle.rotation.z = Math.PI / 2;
-    leftHandle.rotation.y = Math.PI / 2;
-    leftHandle.position.set(-0.35, 0.35, 0);
-    trophyGroup.add(leftHandle);
+    // Cream/white material for the rabbit logo
+    const logoMat = new THREE.MeshPhongMaterial({ 
+        color: cream,
+        emissive: 0xCCCCBB,
+        specular: 0xFFFFFF,
+        shininess: 100
+    });
     
-    // Right handle
-    const rightHandle = new THREE.Mesh(handleGeo, cupMat);
-    rightHandle.rotation.z = -Math.PI / 2;
-    rightHandle.rotation.y = Math.PI / 2;
-    rightHandle.position.set(0.35, 0.35, 0);
-    trophyGroup.add(rightHandle);
+    // Outer dark ring (border)
+    const outerRingGeo = new THREE.CylinderGeometry(0.75, 0.75, 0.12, 32);
+    const outerRing = new THREE.Mesh(outerRingGeo, borderMat);
+    outerRing.rotation.x = Math.PI / 2;
+    badgeGroup.add(outerRing);
     
-    // Base
-    const baseGeo = new THREE.CylinderGeometry(0.3, 0.35, 0.15, 16);
-    const base = new THREE.Mesh(baseGeo, cupMat);
-    base.position.y = -0.08;
-    trophyGroup.add(base);
+    // Green circle (main badge)
+    const circleGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.14, 32);
+    const circle = new THREE.Mesh(circleGeo, greenMat);
+    circle.rotation.x = Math.PI / 2;
+    circle.position.z = 0.02;
+    badgeGroup.add(circle);
     
-    // Bottom pedestal
-    const pedestalGeo = new THREE.BoxGeometry(0.4, 0.1, 0.4);
-    const pedestal = new THREE.Mesh(pedestalGeo, cupMat);
-    pedestal.position.y = -0.2;
-    trophyGroup.add(pedestal);
+    // === TaskRabbit Rabbit Logo ===
+    // The logo is a stylized rabbit made of curved lines
     
-    trophyGroup.position.set(chosenLane, 0.8, -50);
-    trophyGroup.isBonus = true;
-    trophyGroup.rotation.y = 0;
+    // Main body curve (the "C" shape)
+    const bodyGeo = new THREE.TorusGeometry(0.28, 0.055, 8, 24, Math.PI * 1.4);
+    const body = new THREE.Mesh(bodyGeo, logoMat);
+    body.rotation.z = Math.PI * 0.3;
+    body.position.set(-0.05, -0.08, 0.1);
+    badgeGroup.add(body);
     
-    scene.add(trophyGroup);
-    coins.push(trophyGroup);
+    // Head (small circle at top of C)
+    const headGeo = new THREE.SphereGeometry(0.1, 16, 16);
+    const head = new THREE.Mesh(headGeo, logoMat);
+    head.position.set(0.15, 0.22, 0.1);
+    head.scale.z = 0.5;
+    badgeGroup.add(head);
+    
+    // Ear (the tall curved part - like a "9" or "?")
+    const earGeo = new THREE.TorusGeometry(0.15, 0.045, 8, 16, Math.PI * 1.2);
+    const ear = new THREE.Mesh(earGeo, logoMat);
+    ear.rotation.z = -Math.PI * 0.2;
+    ear.position.set(0.22, 0.32, 0.1);
+    badgeGroup.add(ear);
+    
+    // Ear tip (small ball at top)
+    const earTipGeo = new THREE.SphereGeometry(0.055, 12, 12);
+    const earTip = new THREE.Mesh(earTipGeo, logoMat);
+    earTip.position.set(0.32, 0.48, 0.1);
+    earTip.scale.z = 0.5;
+    badgeGroup.add(earTip);
+    
+    // Tail curve (bottom part connecting back)
+    const tailGeo = new THREE.TorusGeometry(0.12, 0.04, 8, 12, Math.PI * 0.8);
+    const tail = new THREE.Mesh(tailGeo, logoMat);
+    tail.rotation.z = Math.PI * 1.1;
+    tail.position.set(-0.18, -0.32, 0.1);
+    badgeGroup.add(tail);
+    
+    // Connecting line (vertical part of the rabbit)
+    const lineGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 8);
+    const line = new THREE.Mesh(lineGeo, logoMat);
+    line.position.set(0.22, 0.08, 0.1);
+    line.rotation.z = Math.PI * 0.05;
+    badgeGroup.add(line);
+    
+    // Add glow effect
+    const glowLight = new THREE.PointLight(trGreen, 1, 3);
+    glowLight.position.z = 0.3;
+    badgeGroup.add(glowLight);
+    
+    // Position and configure
+    badgeGroup.position.set(chosenLane, 0.8, -50);
+    badgeGroup.isBonus = true;
+    
+    // Rotate to face player
+    badgeGroup.rotation.x = -Math.PI / 6; // Tilt towards player
+    
+    scene.add(badgeGroup);
+    coins.push(badgeGroup);
 }
 
 function spawnScrewdriver() {
@@ -1328,9 +1384,9 @@ function update() {
 
         if (zDiff < 1 && laneDiff < 1) {
             // Collected item!
-            if (obj.itemType === 'task') {
-                // Task item - show random fact
-                score += 20;
+            if (obj.itemType === 'task' || obj.isBonus) {
+                // Task item OR Trophy - show random fact
+                score += obj.isBonus ? 50 : 20;  // Trophy worth more!
                 playSound('bonus');
                 const randomFact = TASKRABBIT_FACTS[Math.floor(Math.random() * TASKRABBIT_FACTS.length)];
                 showTaskMessage(randomFact);

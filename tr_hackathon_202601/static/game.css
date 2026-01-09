@@ -278,6 +278,41 @@ input[type="text"]:focus {
     border-left: 3px solid #FFD700;
 }
 
+.legend-item.bonus-item {
+    background: linear-gradient(135deg, rgba(29, 191, 115, 0.3), rgba(24, 168, 99, 0.2));
+    border: 2px solid rgba(29, 191, 115, 0.6);
+    border-radius: 8px;
+}
+
+.legend-item.bonus-item .item-icon {
+    font-size: 1.1em;
+    animation: badge-glow 1.5s ease-in-out infinite;
+}
+
+.legend-item.bonus-item .item-icon.tr-badge-icon {
+    background: #1DBF73;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    border: 2px solid #333;
+    box-shadow: 0 0 8px rgba(29, 191, 115, 0.6);
+}
+
+.legend-item.bonus-item .item-points {
+    color: #1DBF73;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(29, 191, 115, 0.5);
+}
+
+@keyframes badge-glow {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(29, 191, 115, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(29, 191, 115, 0.8); }
+}
+
 .item-icon {
     font-size: 1.5rem;
     margin-right: 10px;

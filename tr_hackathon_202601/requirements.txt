@@ -1,0 +1,16 @@
+# TaskRabbit Merrython Game - Requirements
+# =========================================
+
+# Flask web framework
+Flask==3.0.0
+flask-cors==4.0.0
+Werkzeug==3.0.1
+
+# Snowflake connector for data warehouse
+snowflake-connector-python==3.6.0
+
+# Environment variable management
+python-dotenv==1.0.0
+
+# For date/time handling
+python-dateutil==2.8.2
