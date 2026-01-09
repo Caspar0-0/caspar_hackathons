@@ -2,7 +2,6 @@
 
 A Starbucks-style "Merrython" endless runner game featuring TaskRabbit branding, built for the TR Holiday Hackathon 2026.
 
-![TaskRabbit](https://www.taskrabbit.com/images/logo.svg)
 
 ## 🎮 Overview
 
